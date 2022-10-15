@@ -1,0 +1,126 @@
+/*
+alter user hr2 
+    IDENTIFIED by patik01;
+
+
+SELECT 
+    first_name,
+    last_name
+FROM 
+    employees;
+
+
+
+SELECT 
+    first_name,
+    last_name
+FROM 
+    employees
+WHERE
+first_name like 'G%';
+
+
+
+SELECT
+    first_name,
+    last_name,
+    d.department_name
+FROM
+    employees e INNER JOIN departments d on d.department_id = e.department_id;
+    
+
+
+SET SERVEROUTPUT ON
+DECLARE
+    v_x NUMBER := 20;
+    v_y NUMBER := 22;
+    v_z NUMBER;
+BEGIN
+    v_z := v_x +v_y;
+    IF v_z = 42 THEN
+     dbms_output.put_line
+     ('Az elet ertelme');
+    END IF;
+    dbms_output.put_line
+    (v_z);
+END;
+
+
+SET SERVEROUTPUT ON
+DECLARE
+    v_employee_id employees.employee_id%TYPE := 100;
+    v_salary employees.salary%TYPE;
+BEGIN
+    SELECT 
+        employees.employee_id,
+        employees.salary
+    INTO
+        v_employee_id,
+        v_salary
+    FROM
+        employees
+    WHERE
+        employee_id = v_employee_id;
+    dbms_output.put_line
+    (v_salary || '          ' || v_employee_id );
+END;
+/
+
+
+SET SERVEROUTPUT ON
+DECLARE
+    v_x NUMBER := 5;
+    v_y NUMBER := 1;
+BEGIN
+    FOR i IN 1..v_x LOOP
+     v_y := v_y * i;
+    END LOOP;
+    dbms_output.put_line
+    (v_y);
+END;
+/
+
+SET SERVEROUTPUT ON
+DECLARE
+    CURSOR emp_cursor IS
+     SELECT salary FROM employees
+     WHERE last_name LIKE 'G%';
+    v_salary employees.salary%TYPE;
+    sum_salary NUMBER := 0;
+BEGIN
+    OPEN emp_cursor;
+    LOOP
+     FETCH emp_cursor INTO v_salary;
+     EXIT WHEN  emp_cursor%NOTFOUND;
+     sum_salary := sum_salary + v_salary;
+    END LOOP;
+    CLOSE emp_cursor;
+    dbms_output.put_line
+    (sum_salary);
+END;
+/
+*/
+
+SET SERVEROUTPUT ON
+CREATE OR REPLACE PROCEDURE list_salarys IS
+/*
+    v_emp_lastname  employees.last_name%TYPE;
+    v_emp_firstname employees.first_name%TYPE;
+    v_emp_salary    employees.salary%TYPE;
+*/
+    CURSOR emp_cursor IS
+      SELECT last_name, first_name, salary FROM employees
+      WHERE last_name LIKE 'G%';
+BEGIN
+    FOR employee IN emp_cursor
+     LOOP
+        dbms_output.put_line
+        (employee.last_name || employee.first_name || employee.salary);
+     END LOOP;
+END;
+/
+
+BEGIN
+    list_salarys;
+END;
+/
